@@ -17,11 +17,13 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 
 import com.example.loader.loaderdemo.R;
+import com.example.loader.loaderdemo.Utils;
 import com.example.loader.loaderdemo.models.Shape;
 import com.example.loader.loaderdemo.provider.ShapeContentProvider;
 import com.example.loader.loaderdemo.provider.ShapeContract;
@@ -36,8 +38,6 @@ import butterknife.ButterKnife;
 public class ShapeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String TAG = ShapeActivity.class.getSimpleName();
-
-    private static final String KEY_SHAPE = "shape_key";
 
     private static final int LOADER_ID = 2;
 
@@ -54,7 +54,7 @@ public class ShapeActivity extends AppCompatActivity implements LoaderManager.Lo
     // Shape we will eventually use to display or create new items
     private Shape mShape;
 
-    // TODO: this needs to get pointed to a real item id
+    // item id
     private int mItemId = -1;
 
     @Override
@@ -75,106 +75,10 @@ public class ShapeActivity extends AppCompatActivity implements LoaderManager.Lo
             getLoaderManager().initLoader(LOADER_ID, null, this);
         }
 
+        mBtnCancel.setOnClickListener(CancelListener);
+        mBtnSave.setOnClickListener(SaveListener);
+        mBtnDelete.setOnClickListener(DeleteListener);
         colors = getResources().getStringArray(R.array.colors);
-
-        mBtnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        mBtnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                boolean clearToProceed = false;
-                String shapeName = mEtShapeName.getText().toString();
-                String color =  mSpShapeColor.getSelectedItem().toString();
-                String num_sides = mEtShapeNumSides.getText().toString();
-
-                if(TextUtils.isEmpty(shapeName)){
-                    Snackbar.make(v, "Please fill in a name", Snackbar.LENGTH_SHORT).show();
-                }else if(TextUtils.isEmpty(color)){
-                    Snackbar.make(v, "Please select a color", Snackbar.LENGTH_SHORT).show();
-                }else if(TextUtils.isEmpty(num_sides)){
-                    Snackbar.make(v, "Please select a color", Snackbar.LENGTH_SHORT).show();
-                }else{
-                    clearToProceed = true;
-                }
-
-                if(clearToProceed){
-
-                    if(mShape == null) {
-                        // TODO: save off the item in the provider
-                        boolean savedShape = saveShape(shapeName, color, Integer.parseInt(num_sides));
-
-                        if (savedShape) {
-                            // todo: Add action, to remove shape ?
-                            Snackbar.make(v, "Saved " + shapeName, Snackbar.LENGTH_SHORT).setCallback(new Snackbar.Callback() {
-                                @Override
-                                public void onDismissed(Snackbar snackbar, int event) {
-                                    super.onDismissed(snackbar, event);
-                                    finish();
-                                }
-
-                                @Override
-                                public void onShown(Snackbar snackbar) {
-                                    mBtnCancel.setEnabled(false);
-                                    mBtnSave.setEnabled(false);
-                                }
-                            }).show();
-                        }
-                    }else{
-
-                        Shape updatedShape = new Shape(mItemId, shapeName, color, Integer.parseInt(num_sides));
-
-                        int updatedId = updateShape(updatedShape);
-
-                        Snackbar.make(v, "Updated shape at " + updatedId, Snackbar.LENGTH_SHORT).setCallback(new Snackbar.Callback() {
-                            @Override
-                            public void onDismissed(Snackbar snackbar, int event) {
-                                super.onDismissed(snackbar, event);
-                                finish();
-                            }
-
-                            @Override
-                            public void onShown(Snackbar snackbar) {
-                                mBtnCancel.setEnabled(false);
-                                mBtnSave.setEnabled(false);
-                                mBtnDelete.setEnabled(false);
-                            }
-                        }).show();
-                    }
-                }
-            }
-        });
-
-        mBtnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: add some functionality here for removing items from db and content provider
-
-                int id = deleteShape();
-
-                if(id != -1){
-                    Snackbar.make(v, "Deleted "+ Integer.toString(id), Snackbar.LENGTH_SHORT).setCallback(new Snackbar.Callback() {
-                        @Override
-                        public void onDismissed(Snackbar snackbar, int event) {
-                            finish();
-                        }
-
-                        @Override
-                        public void onShown(Snackbar snackbar) {
-                            mBtnCancel.setEnabled(false);
-                            mBtnSave.setEnabled(false);
-                            mBtnDelete.setEnabled(false);
-                        }
-                    }).show();
-                }
-            }
-        });
-
         mSpShapeColor.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, colors));
     }
 
@@ -231,9 +135,10 @@ public class ShapeActivity extends AppCompatActivity implements LoaderManager.Lo
      * @return - index of the color in the array
      */
     private int lookupColor(String color){
+        Log.d(TAG, "lookupColor() called with: " + "color = [" + color + "]");
         int position = 0;
 
-        for(int i = 0; i< colors.length; i++){
+        for (int i = 0; i < colors.length; i++) {
             if(color.equalsIgnoreCase(colors[i])){
                 position = i;
             }
@@ -249,6 +154,7 @@ public class ShapeActivity extends AppCompatActivity implements LoaderManager.Lo
      * @return - true/false if the shape saved
      */
     private boolean saveShape(String name, String color, int numSides){
+        Log.d(TAG, "saveShape() called with: " + "name = [" + name + "], color = [" + color + "], numSides = [" + numSides + "]");
         ContentValues values = new ContentValues();
         values.put(ShapeContract.COL_NAME, name);
         values.put(ShapeContract.COL_COLOR, color);
@@ -263,7 +169,7 @@ public class ShapeActivity extends AppCompatActivity implements LoaderManager.Lo
      * Deletes the current shape from the db through the content provider
      */
     private int deleteShape(){
-
+        Log.d(TAG, "deleteShape() called with: " + "");
         int id = 0;
         if(mShape != null){
 
@@ -275,7 +181,13 @@ public class ShapeActivity extends AppCompatActivity implements LoaderManager.Lo
         return id;
     }
 
+    /**
+     * Helper function to update the shape
+     * @param shape - the current shape to update
+     * @return - the row id of the updated shape
+     */
     private int updateShape(Shape shape){
+        Log.d(TAG, "updateShape() called with: " + "shape = [" + shape + "]");
 
         Uri updateUri = ContentUris.withAppendedId(ShapeContract.CONTENT_URI, shape.id);
         ContentResolver contentResolver = getContentResolver();
@@ -288,7 +200,114 @@ public class ShapeActivity extends AppCompatActivity implements LoaderManager.Lo
         return contentResolver.update(updateUri, values, null, null);
     }
 
+    private final View.OnClickListener DeleteListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // TODO: add some functionality here for removing items from db and content provider
 
+            Utils.hideKeyboard(ShapeActivity.this, mEtShapeNumSides.getWindowToken());
+
+            int id = deleteShape();
+
+            if(id != -1){
+                Snackbar.make(v, "Deleted "+ Integer.toString(id), Snackbar.LENGTH_SHORT).setCallback(new Snackbar.Callback() {
+                    @Override
+                    public void onDismissed(Snackbar snackbar, int event) {
+                        finish();
+                    }
+
+                    @Override
+                    public void onShown(Snackbar snackbar) {
+                        mBtnCancel.setEnabled(false);
+                        mBtnSave.setEnabled(false);
+                        mBtnDelete.setEnabled(false);
+                    }
+                }).show();
+            }
+        }
+    };
+
+    private final View.OnClickListener SaveListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            boolean clearToProceed = false;
+            String shapeName = mEtShapeName.getText().toString();
+            String color =  mSpShapeColor.getSelectedItem().toString();
+            String num_sides = mEtShapeNumSides.getText().toString();
+
+            if(TextUtils.isEmpty(shapeName)){
+                Snackbar.make(v, "Please fill in a name", Snackbar.LENGTH_SHORT).show();
+            }else if(TextUtils.isEmpty(color)){
+                Snackbar.make(v, "Please select a color", Snackbar.LENGTH_SHORT).show();
+            }else if(TextUtils.isEmpty(num_sides)){
+                Snackbar.make(v, "Please select a color", Snackbar.LENGTH_SHORT).show();
+            }else{
+                clearToProceed = true;
+            }
+
+            if(clearToProceed){
+
+                Utils.hideKeyboard(ShapeActivity.this, mEtShapeNumSides.getWindowToken());
+
+                if(mShape == null) {
+                    // save off the item in the provider
+                    boolean savedShape = saveShape(shapeName, color, Integer.parseInt(num_sides));
+
+                    if (savedShape) {
+                        // todo: Add action, to remove shape ?
+                        Snackbar.make(v, "Saved " + shapeName, Snackbar.LENGTH_SHORT).setCallback(new Snackbar.Callback() {
+                            @Override
+                            public void onDismissed(Snackbar snackbar, int event) {
+                                super.onDismissed(snackbar, event);
+                                finish();
+                            }
+
+                            @Override
+                            public void onShown(Snackbar snackbar) {
+                                mBtnCancel.setEnabled(false);
+                                mBtnSave.setEnabled(false);
+                            }
+                        }).show();
+                    }
+                }else{
+
+                    Shape updatedShape = new Shape(mItemId, shapeName, color, Integer.parseInt(num_sides));
+
+                    int updatedId = updateShape(updatedShape);
+
+                    Snackbar.make(v, "Updated shape at " + updatedId, Snackbar.LENGTH_SHORT).setCallback(new Snackbar.Callback() {
+                        @Override
+                        public void onDismissed(Snackbar snackbar, int event) {
+                            super.onDismissed(snackbar, event);
+                            finish();
+                        }
+
+                        @Override
+                        public void onShown(Snackbar snackbar) {
+                            mBtnCancel.setEnabled(false);
+                            mBtnSave.setEnabled(false);
+                            mBtnDelete.setEnabled(false);
+                        }
+                    }).show();
+                }
+            }
+        }
+    };
+
+    private final View.OnClickListener CancelListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            Utils.hideKeyboard(ShapeActivity.this, mEtShapeNumSides.getWindowToken());
+            finish();
+        }
+    };
+
+
+    /**
+     * ShapeLoader for loading shapes off the UI
+     */
     private class BackgroundShapeLoader extends AsyncTaskLoader<Loader<Cursor>>{
 
         public BackgroundShapeLoader(Context context){

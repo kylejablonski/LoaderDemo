@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rl_shape"
     android:padding="@dimen/text_margin"
     android:background="@drawable/selector"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/tv_name"
         android:textSize="@dimen/text_title"
+        tools:text="Title Text"
         android:textColor="@color/text_primary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/tv_color"
         android:textSize="@dimen/text_subtitle"
+        tools:text="Subtext"
         android:textColor="@color/text_secondary"
         android:layout_below="@+id/tv_name"
         android:layout_width="wrap_content"
@@ -22,6 +25,7 @@
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/tv_num_sides"
         android:textSize="@dimen/text_body"
+        tools:text="5 sides"
         android:textStyle="bold"
         android:textColor="@color/text_primary"
         android:layout_alignParentRight="true"

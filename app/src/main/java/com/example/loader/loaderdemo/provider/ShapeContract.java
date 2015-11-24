@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
+ * Contract class for a {@link com.example.loader.loaderdemo.models.Shape}
  * Created by kyle.jablonski on 11/23/15.
  */
 public final class ShapeContract implements BaseColumns{

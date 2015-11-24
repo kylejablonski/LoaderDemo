@@ -31,6 +31,10 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+/**
+ * Activity which displays a list of {@link Shape} and allows editing or adding more shapes.
+ * created by kyle.jablonski on 11/23/15
+ */
 public class ScrollingActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, ShapeClicked {
 
     private static final String TAG = ScrollingActivity.class.getSimpleName();
@@ -110,6 +114,9 @@ public class ScrollingActivity extends AppCompatActivity implements LoaderManage
         mAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Init
+     */
     public void initDefaults(){
 
         Log.d(TAG, "initialized defaults...");
@@ -124,6 +131,10 @@ public class ScrollingActivity extends AppCompatActivity implements LoaderManage
 
     }
 
+    /**
+     * Displays the data from the cursor
+     * @param data - the cursor to use
+     */
     public void displayData(Cursor data){
 
         Log.d(TAG, "loading data...");
@@ -171,6 +182,9 @@ public class ScrollingActivity extends AppCompatActivity implements LoaderManage
         startActivity(shapeDetailIntent);
     }
 
+    /**
+     * AsyncTaskLoader for loading a list of Shapes
+     */
     private class ShapeListLoader extends AsyncTaskLoader<Loader<Cursor>> {
 
         public ShapeListLoader(Context context){

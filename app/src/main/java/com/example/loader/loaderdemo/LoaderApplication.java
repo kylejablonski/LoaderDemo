@@ -5,6 +5,7 @@ import android.app.Application;
 import com.facebook.stetho.Stetho;
 
 /**
+ * Application class for this app
  * Created by kyle.jablonski on 11/24/15.
  */
 public class LoaderApplication extends Application {
