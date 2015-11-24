@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/til_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/et_shape_name"
+            android:hint="@string/name_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.v7.widget.AppCompatSpinner
+        android:id="@+id/et_shape_color"
+        android:layout_below="@+id/til_name"
+        android:spinnerMode="dialog"
+        android:layout_width="match_parent"
+        android:layout_height="?listPreferredItemHeightSmall" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/til_num_sides"
+        android:layout_below="@+id/et_shape_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/et_shape_num_sides"
+            android:inputType="number"
+            android:hint="@string/num_hint"
+            android:layout_below="@+id/et_shape_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </android.support.design.widget.TextInputLayout>
+
+    <LinearLayout
+        android:layout_below="@+id/til_num_sides"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_height="wrap_content">
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_cancel"
+            android:text="@string/cancel"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_height="wrap_content" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_delete"
+            android:text="@string/delete"
+            android:visibility="gone"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_height="wrap_content" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_save"
+            android:text="@string/save"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            style="@style/Base.Widget.AppCompat.Button.Colored"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</RelativeLayout>
