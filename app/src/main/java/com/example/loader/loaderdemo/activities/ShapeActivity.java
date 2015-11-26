@@ -45,7 +45,7 @@ public class ShapeActivity extends AppCompatActivity implements LoaderManager.Lo
 
     @Bind(R.id.et_shape_name) AppCompatEditText mEtShapeName;
     @Bind(R.id.et_shape_num_sides) AppCompatEditText mEtShapeNumSides;
-    @Bind(R.id.et_shape_color) AppCompatSpinner mSpShapeColor;
+    @Bind(R.id.sp_shape_color) AppCompatSpinner mSpShapeColor;
 
     @Bind(R.id.btn_cancel) AppCompatButton mBtnCancel;
     @Bind(R.id.btn_save) AppCompatButton mBtnSave;

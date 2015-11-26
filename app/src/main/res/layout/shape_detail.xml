@@ -17,7 +17,7 @@
     </android.support.design.widget.TextInputLayout>
 
     <android.support.v7.widget.AppCompatSpinner
-        android:id="@+id/et_shape_color"
+        android:id="@+id/sp_shape_color"
         android:layout_below="@+id/til_name"
         android:spinnerMode="dialog"
         android:layout_width="match_parent"
@@ -25,14 +25,14 @@
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/til_num_sides"
-        android:layout_below="@+id/et_shape_color"
+        android:layout_below="@+id/sp_shape_color"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/et_shape_num_sides"
             android:inputType="number"
             android:hint="@string/num_hint"
-            android:layout_below="@+id/et_shape_color"
+            android:layout_below="@+id/sp_shape_color"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </android.support.design.widget.TextInputLayout>
