@@ -1,11 +1,9 @@
 package com.example.loader.loaderdemo.activities;
 
 import android.app.LoaderManager;
-import android.content.AsyncTaskLoader;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
@@ -28,6 +26,11 @@ import com.example.loader.loaderdemo.models.Shape;
 import com.example.loader.loaderdemo.provider.ShapeContentProvider;
 import com.example.loader.loaderdemo.provider.ShapeContract;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -41,7 +44,7 @@ public class ShapeActivity extends AppCompatActivity implements LoaderManager.Lo
 
     private static final int LOADER_ID = 2;
 
-    private String [] colors ;
+    private List<String> mColors;
 
     @Bind(R.id.et_shape_name) AppCompatEditText mEtShapeName;
     @Bind(R.id.et_shape_num_sides) AppCompatEditText mEtShapeNumSides;
@@ -78,8 +81,9 @@ public class ShapeActivity extends AppCompatActivity implements LoaderManager.Lo
         mBtnCancel.setOnClickListener(CancelListener);
         mBtnSave.setOnClickListener(SaveListener);
         mBtnDelete.setOnClickListener(DeleteListener);
-        colors = getResources().getStringArray(R.array.colors);
-        mSpShapeColor.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, colors));
+        mColors = new ArrayList<>();
+        mColors.addAll(Arrays.asList(getResources().getStringArray(R.array.colors)));
+        mSpShapeColor.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, mColors));
     }
 
     @Override
@@ -98,8 +102,14 @@ public class ShapeActivity extends AppCompatActivity implements LoaderManager.Lo
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        BackgroundShapeLoader loader = new BackgroundShapeLoader(ShapeActivity.this);
-        return loader.loadInBackground();
+        Uri loaderUri = ContentUris.withAppendedId(ShapeContract.CONTENT_URI, mItemId);
+        return new CursorLoader(
+                ShapeActivity.this,
+                loaderUri,
+                ShapeContract.PROJECTION_ALL,
+                null,
+                null,
+                null);
     }
 
     @Override
@@ -135,15 +145,12 @@ public class ShapeActivity extends AppCompatActivity implements LoaderManager.Lo
      * @return - index of the color in the array
      */
     private int lookupColor(String color){
-        Log.d(TAG, "lookupColor() called with: " + "color = [" + color + "]");
-        int position = 0;
 
-        for (int i = 0; i < colors.length; i++) {
-            if(color.equalsIgnoreCase(colors[i])){
-                position = i;
-            }
-        }
-        return position;
+        // Sort the colors
+        Collections.sort(mColors);
+
+        // Lookup the color string
+        return Collections.binarySearch(mColors, color);
     }
 
     /**
@@ -303,27 +310,4 @@ public class ShapeActivity extends AppCompatActivity implements LoaderManager.Lo
             finish();
         }
     };
-
-
-    /**
-     * ShapeLoader for loading shapes off the UI
-     */
-    private class BackgroundShapeLoader extends AsyncTaskLoader<Loader<Cursor>>{
-
-        public BackgroundShapeLoader(Context context){
-            super(context);
-        }
-
-        @Override
-        public Loader<Cursor> loadInBackground() {
-            Uri loaderUri = ContentUris.withAppendedId(ShapeContract.CONTENT_URI, mItemId);
-            return new CursorLoader(
-                    ShapeActivity.this,
-                    loaderUri,
-                    ShapeContract.PROJECTION_ALL,
-                    null,
-                    null,
-                    null);
-        }
-    }
 }

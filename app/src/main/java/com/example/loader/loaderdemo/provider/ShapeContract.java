@@ -49,6 +49,6 @@ public final class ShapeContract implements BaseColumns{
     public static final String DROP_TABLE = "DROP TABLE IF EXISTS "+ TABLE_NAME;
 
 
-    public static final String SORT_ORDER_DEFAULT = COL_NAME + " DESC";
+    public static final String SORT_ORDER_DEFAULT = COL_NAME + " ASC";
 
 }

@@ -1,8 +1,6 @@
 package com.example.loader.loaderdemo.activities;
 
 import android.app.LoaderManager;
-import android.content.AsyncTaskLoader;
-import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -98,8 +96,8 @@ public class ScrollingActivity extends AppCompatActivity implements LoaderManage
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        ShapeListLoader loader = new ShapeListLoader(ScrollingActivity.this);
-        return loader.loadInBackground();
+        return new CursorLoader(ScrollingActivity.this, ShapeContract.CONTENT_URI,
+                ShapeContract.PROJECTION_ALL, null, null, ShapeContract.SORT_ORDER_DEFAULT);
     }
 
     @Override
@@ -140,7 +138,7 @@ public class ScrollingActivity extends AppCompatActivity implements LoaderManage
         Log.d(TAG, "loading data...");
 
         mShapes.clear();
-        if(data != null) {
+        if(data != null && data.getCount() > 0) {
 
             data.moveToFirst();
             while (!data.isAfterLast()) {
@@ -180,23 +178,5 @@ public class ScrollingActivity extends AppCompatActivity implements LoaderManage
         Intent shapeDetailIntent = new Intent(ScrollingActivity.this, ShapeActivity.class);
         shapeDetailIntent.putExtra(KEY_SHAPE_ID, shape.id);
         startActivity(shapeDetailIntent);
-    }
-
-    /**
-     * AsyncTaskLoader for loading a list of Shapes
-     */
-    private class ShapeListLoader extends AsyncTaskLoader<Loader<Cursor>> {
-
-        public ShapeListLoader(Context context){
-            super(context);
-        }
-
-        @Override
-        public Loader<Cursor> loadInBackground() {
-            return new CursorLoader(ScrollingActivity.this, ShapeContract.CONTENT_URI,
-                    ShapeContract.PROJECTION_ALL, null, null, ShapeContract.SORT_ORDER_DEFAULT);
-        }
-
-
     }
 }

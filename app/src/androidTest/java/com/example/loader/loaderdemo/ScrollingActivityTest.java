@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 
 
 /**
+ * Test class for the {@link ScrollingActivity}
  * Created by kyle.jablonski on 11/25/15.
  */
 
@@ -25,6 +26,7 @@ import org.junit.runner.RunWith;
 public class ScrollingActivityTest extends ActivityInstrumentationTestCase2<ScrollingActivity> {
 
 
+    // Constants
     private static final String SHAPE_TEXT = "Decagon";
     private static final String NUM_SIDES_TEXT = "10";
 
@@ -57,19 +59,17 @@ public class ScrollingActivityTest extends ActivityInstrumentationTestCase2<Scro
                 .perform(ViewActions.typeText(SHAPE_TEXT));
 
         Espresso.onView(ViewMatchers.withId(R.id.et_shape_num_sides))
-                .perform(ViewActions.typeText(NUM_SIDES_TEXT));
+                .perform(ViewActions.typeText(NUM_SIDES_TEXT), ViewActions.closeSoftKeyboard());
 
         Espresso.onView(ViewMatchers.withId(R.id.btn_save)).perform(ViewActions.click());
     }
 
     @Test
-    public void testDeleteShape(){
+    public void testRemoveShape(){
+        Espresso.onView(ViewMatchers.withText(SHAPE_TEXT))
+                .perform(ViewActions.click());
 
-        Espresso.onView(ViewMatchers.withText("Decagon"))
+        Espresso.onView(ViewMatchers.withId(R.id.btn_delete))
                 .perform(ViewActions.click());
     }
-
-
-
-
 }
